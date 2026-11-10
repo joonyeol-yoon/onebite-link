@@ -1,4 +1,5 @@
 import type { Folder } from "@/lib/types";
+import { FolderIcon } from "@/components/icons";
 import NavLink from "./nav-link";
 
 type Props = {
@@ -8,10 +9,9 @@ type Props = {
 
 export default function FolderItem({ folder, count }: Props) {
   return (
-    <li>
-      <NavLink href={`/folder/${folder.id}`} count={count}>
-        <span aria-hidden>📁</span>
-        <span className="truncate">{folder.name}</span>
+    <li className="shrink-0 md:shrink">
+      <NavLink href={`/folder/${folder.id}`} count={count} icon={<FolderIcon />}>
+        {folder.name}
       </NavLink>
     </li>
   );

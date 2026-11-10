@@ -23,10 +23,12 @@ export default async function FolderPage({ params }: PageProps<"/folder/[id]">) 
   const folder = findFolder((await params).id);
   if (!folder) notFound();
 
+  const folderBookmarks = bookmarks.filter((b) => b.folderId === folder.id);
+
   return (
     <>
-      <PageTitle>{folder.name}</PageTitle>
-      <LinkGrid bookmarks={bookmarks.filter((b) => b.folderId === folder.id)} />
+      <PageTitle description={`링크 ${folderBookmarks.length}개`}>{folder.name}</PageTitle>
+      <LinkGrid bookmarks={folderBookmarks} />
     </>
   );
 }

@@ -8,11 +8,9 @@ type Props = {
 
 export default function FolderList({ folders, bookmarks }: Props) {
   return (
-    <div className="flex flex-col gap-2">
-      <h2 className="px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-        폴더
-      </h2>
-      <ul className="flex flex-col gap-1">
+    <div className="flex items-center gap-2 md:flex-col md:items-stretch">
+      <h2 className="hidden px-3 pb-1 text-xs font-medium text-ink-muted md:block">폴더</h2>
+      <ul className="flex gap-1 md:flex-col">
         {folders.map((folder) => (
           <FolderItem
             key={folder.id}

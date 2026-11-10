@@ -23,11 +23,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${plexSansKR.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <div className="flex h-screen flex-col bg-zinc-50">
+        <div className="flex h-dvh flex-col">
           <Header />
-          <div className="flex min-h-0 flex-1">
+          <div className="flex min-h-0 flex-1 flex-col md:flex-row">
             <Sidebar folders={folders} bookmarks={bookmarks} />
-            <main className="flex-1 overflow-y-auto p-6">{children}</main>
+            <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8">
+              <div className="mx-auto max-w-7xl">{children}</div>
+            </main>
           </div>
         </div>
       </body>

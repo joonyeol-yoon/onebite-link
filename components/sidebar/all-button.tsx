@@ -1,3 +1,4 @@
+import { StackIcon } from "@/components/icons";
 import NavLink from "./nav-link";
 
 type Props = {
@@ -6,8 +7,8 @@ type Props = {
 
 export default function AllButton({ count }: Props) {
   return (
-    <NavLink href="/" count={count}>
-      <span className="font-semibold">All</span>
+    <NavLink href="/" count={count} icon={<StackIcon />}>
+      All
     </NavLink>
   );
 }

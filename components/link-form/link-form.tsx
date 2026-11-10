@@ -9,10 +9,12 @@ type Props = {
 
 export default function LinkForm({ folders }: Props) {
   return (
-    <form className="flex max-w-xl flex-col gap-5 rounded-xl border border-zinc-200 bg-white p-6">
+    <form className="flex max-w-xl flex-col gap-6 rounded-xl border border-line bg-surface p-6 shadow-[0_1px_3px_rgb(27_29_41/0.06)] md:p-8">
       <UrlInput />
       <FolderSelect folders={folders} />
-      <SaveButton />
+      <div className="flex flex-col border-t border-line pt-6">
+        <SaveButton />
+      </div>
     </form>
   );
 }

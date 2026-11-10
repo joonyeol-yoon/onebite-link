@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function NewLinkPage() {
   return (
     <>
-      <PageTitle>새 링크</PageTitle>
+      <PageTitle description="저장할 주소와 넣어 둘 폴더를 골라 주세요.">새 링크</PageTitle>
       <LinkForm folders={folders} />
     </>
   );

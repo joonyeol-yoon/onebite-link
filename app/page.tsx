@@ -5,7 +5,7 @@ import { bookmarks } from "@/lib/mock-data";
 export default function Home() {
   return (
     <>
-      <PageTitle>All</PageTitle>
+      <PageTitle description={`저장한 링크 ${bookmarks.length}개`}>All</PageTitle>
       <LinkGrid bookmarks={bookmarks} />
     </>
   );

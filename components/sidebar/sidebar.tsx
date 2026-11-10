@@ -9,9 +9,12 @@ type Props = {
 
 export default function Sidebar({ folders, bookmarks }: Props) {
   return (
-    <aside className="flex w-60 shrink-0 flex-col gap-6 border-r border-zinc-200 bg-white p-4">
+    <nav
+      aria-label="폴더 탐색"
+      className="flex shrink-0 gap-1 overflow-x-auto border-b border-line bg-surface px-4 py-2 md:w-60 md:flex-col md:gap-6 md:overflow-visible md:border-r md:border-b-0 md:p-4"
+    >
       <AllButton count={bookmarks.length} />
       <FolderList folders={folders} bookmarks={bookmarks} />
-    </aside>
+    </nav>
   );
 }
