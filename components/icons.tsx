@@ -44,6 +44,15 @@ export function FolderIcon(props: IconProps) {
   );
 }
 
+export function FolderPlusIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.38a1.5 1.5 0 0 1 1.06.44L11.5 8h8A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" />
+      <path d="M12 11v5M9.5 13.5h5" />
+    </Svg>
+  );
+}
+
 export function StackIcon(props: IconProps) {
   return (
     <Svg {...props}>
