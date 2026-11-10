@@ -4,9 +4,9 @@ import NewLinkButton from "./new-link-button";
 
 export default function Header() {
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-line bg-surface px-4 md:px-6">
+    <header className="sticky top-0 z-20 flex h-12 items-center justify-between border-b border-[var(--divider)] bg-[var(--nav-bg)] px-6 backdrop-blur-[20px] backdrop-saturate-[180%]">
       <Logo />
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
         <NewFolderButton />
         <NewLinkButton />
       </div>

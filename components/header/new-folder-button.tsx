@@ -22,7 +22,7 @@ export default function NewFolderButton() {
       <button
         type="button"
         onClick={open}
-        className="flex items-center gap-1.5 rounded-lg border border-line-strong bg-surface px-3.5 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-canvas hover:text-ink active:translate-y-px"
+        className="btn-secondary flex items-center gap-1 text-[14px] font-medium text-[var(--accent)]"
       >
         <FolderPlusIcon className="size-4" />
         새 폴더

@@ -30,7 +30,7 @@ export default function EditFolderButton({ folder }: Props) {
         type="button"
         onClick={open}
         aria-label={`${folder.name} 폴더 이름 수정`}
-        className="hidden size-7 place-items-center rounded-md text-ink-muted opacity-0 transition-[opacity,color,background-color] group-focus-within/folder:opacity-100 group-hover/folder:opacity-100 hover:bg-accent-soft hover:text-accent md:grid"
+        className="folder-action icon-btn hidden size-7 place-items-center rounded-full text-[var(--text-sub)] md:grid"
       >
         <PencilIcon className="size-4" />
       </button>

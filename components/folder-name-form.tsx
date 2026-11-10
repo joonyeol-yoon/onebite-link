@@ -26,13 +26,16 @@ export default function FolderNameForm({ title, titleId, initialName = "", actio
   const errorId = `${titleId}-error`;
 
   return (
-    <form action={formAction} className="flex flex-col gap-6 p-6">
-      <h2 id={titleId} className="text-lg font-bold tracking-tight text-ink">
+    <form action={formAction} className="flex flex-col gap-5 p-8">
+      <h2
+        id={titleId}
+        className="text-[24px] leading-[1.2] font-semibold tracking-[-0.3px] text-[var(--text)]"
+      >
         {title}
       </h2>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor={inputId} className="text-sm font-semibold text-ink">
+        <label htmlFor={inputId} className="text-[14px] font-medium text-[var(--text)]">
           폴더 이름
         </label>
         <input
@@ -46,27 +49,27 @@ export default function FolderNameForm({ title, titleId, initialName = "", actio
           placeholder="예) 개발"
           aria-invalid={state.error ? true : undefined}
           aria-describedby={state.error ? errorId : undefined}
-          className="h-11 rounded-lg border border-line-strong bg-surface px-3.5 text-sm text-ink transition-[border-color,box-shadow] placeholder:text-ink-muted hover:border-ink-muted focus:border-accent focus:shadow-[0_0_0_3px_var(--color-accent-soft)] focus:outline-none aria-invalid:border-red-600"
+          className="rounded-[10px] border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-[17px] text-[var(--text)] transition-[border-color,box-shadow] duration-300 ease-[ease] placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_var(--focus-ring)] focus:outline-none aria-invalid:border-[var(--error)]"
         />
         {state.error && (
-          <p id={errorId} aria-live="polite" className="text-xs text-red-600">
+          <p id={errorId} aria-live="polite" className="text-[14px] text-[var(--error)]">
             {state.error}
           </p>
         )}
       </div>
 
-      <div className="flex justify-end gap-2 border-t border-line pt-5">
+      <div className="mt-3 flex items-center justify-end gap-6">
         <button
           type="button"
           onClick={onDone}
-          className="h-10 rounded-lg border border-line-strong bg-surface px-4 text-sm font-semibold text-ink-soft transition-colors hover:bg-canvas hover:text-ink"
+          className="btn-secondary text-[17px] text-[var(--accent)]"
         >
           취소
         </button>
         <button
           type="submit"
           disabled={pending}
-          className="h-10 rounded-lg bg-accent px-5 text-sm font-semibold text-white shadow-[0_1px_2px_rgb(27_29_41/0.12)] transition-colors hover:bg-accent-hover active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-primary rounded-full bg-[var(--accent)] px-6 py-3 text-[17px] text-white disabled:cursor-not-allowed disabled:opacity-30"
         >
           {pending ? "저장 중…" : "저장"}
         </button>
