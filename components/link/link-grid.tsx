@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Bookmark } from "@/lib/types";
 import { PlusIcon } from "@/components/icons";
 import LinkCard from "./link-card";
+import DeleteLinkButton from "./delete-link-button";
 
 type Props = {
   bookmarks: Bookmark[];
@@ -33,8 +34,12 @@ export default function LinkGrid({ bookmarks }: Props) {
   return (
     <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
       {bookmarks.map((bookmark) => (
-        <li key={bookmark.id}>
+        // 링크(<a>) 안에 버튼을 중첩할 수 없으므로 삭제 버튼은 형제로 두고 우측 상단에 겹쳐 배치한다.
+        <li key={bookmark.id} className="link-item relative">
           <LinkCard bookmark={bookmark} />
+          <div className="absolute top-3 right-3">
+            <DeleteLinkButton bookmark={bookmark} />
+          </div>
         </li>
       ))}
     </ul>

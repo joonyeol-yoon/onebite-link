@@ -103,7 +103,8 @@ body {
 .card-hover {
   transition: background-color 0.3s ease;
 }
-.card-hover:hover {
+.card-hover:hover,
+.link-item:hover .card-hover {
   background: var(--card-hover);
 }
 .card-hover .card-arrow {
@@ -115,7 +116,22 @@ body {
   opacity: 1;
 }
 
-/* 사이드바 폴더: 마우스를 올리거나 포커스가 들어오면 개수 대신 수정·삭제 버튼을 보여 준다 */
+/* 링크 카드: 마우스를 올리거나 포커스가 들어오면 우측 상단에 삭제 버튼을 보여 준다.
+   마우스가 없는 터치 기기에서는 항상 보여 준다. */
+.link-action {
+  opacity: 0;
+}
+.link-item:hover .link-action,
+.link-item:focus-within .link-action {
+  opacity: 1;
+}
+@media (hover: none) {
+  .link-action {
+    opacity: 1;
+  }
+}
+
+/* 사이드바 폴더:마우스를 올리거나 포커스가 들어오면 개수 대신 수정·삭제 버튼을 보여 준다 */
 .folder-action {
   opacity: 0;
 }

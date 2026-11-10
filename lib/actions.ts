@@ -99,6 +99,14 @@ export async function createBookmark(
   redirect(`/folder/${folderId}`);
 }
 
+export async function deleteBookmark(id: number) {
+  const index = bookmarks.findIndex((bookmark) => bookmark.id === id);
+  if (index === -1) return;
+  bookmarks.splice(index, 1);
+
+  revalidatePath("/", "layout");
+}
+
 /** 폴더와 그 폴더에 담긴 링크를 함께 삭제한다. */
 export async function deleteFolder(id: number) {
   const index = folders.findIndex((folder) => folder.id === id);

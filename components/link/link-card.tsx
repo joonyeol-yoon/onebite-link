@@ -27,34 +27,29 @@ export default function LinkCard({ bookmark }: Props) {
         />
       )}
       <div className="flex flex-1 flex-col gap-5 p-6">
-        <div className="flex items-start justify-between gap-3">
-          {bookmark.image ? (
-            <h3 className="line-clamp-2 text-[17px] leading-[1.35] font-semibold tracking-[-0.2px] text-[var(--text)]">
-              {bookmark.title}
-            </h3>
-          ) : (
-            <span
-              aria-hidden
-              className="grid size-10 shrink-0 place-items-center rounded-[10px] border border-[var(--divider)] bg-[var(--bg)] text-[17px] font-semibold text-[var(--text)]"
-            >
-              {bookmark.title.charAt(0).toUpperCase()}
-            </span>
-          )}
-          <ArrowUpRightIcon className="card-arrow mt-1 size-4 shrink-0 text-[var(--text-sub)]" />
-        </div>
+        {/* 우측 상단은 삭제 버튼 자리라, 외부 링크 표시는 도메인 옆에 둔다. */}
+        {!bookmark.image && (
+          <span
+            aria-hidden
+            className="grid size-10 shrink-0 place-items-center rounded-[10px] border border-[var(--divider)] bg-[var(--bg)] text-[17px] font-semibold text-[var(--text)]"
+          >
+            {bookmark.title.charAt(0).toUpperCase()}
+          </span>
+        )}
         <div className="flex flex-col gap-1">
-          {!bookmark.image && (
-            <h3 className="truncate text-[17px] font-semibold tracking-[-0.2px] text-[var(--text)]">
-              {bookmark.title}
-            </h3>
-          )}
+          <h3 className="line-clamp-2 text-[17px] leading-[1.35] font-semibold tracking-[-0.2px] text-[var(--text)]">
+            {bookmark.title}
+          </h3>
           {bookmark.description && (
             <p className="line-clamp-2 text-[14px] leading-[1.4] text-[var(--text-sub)]">
               {bookmark.description}
             </p>
           )}
         </div>
-        <span className="mt-auto truncate text-[13px] text-[var(--text-sub)]">{hostname}</span>
+        <span className="mt-auto flex items-center gap-1 text-[13px] text-[var(--text-sub)]">
+          <span className="truncate">{hostname}</span>
+          <ArrowUpRightIcon className="card-arrow size-3.5 shrink-0" />
+        </span>
       </div>
     </a>
   );
