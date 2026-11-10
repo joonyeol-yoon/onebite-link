@@ -9,4 +9,6 @@ export type Bookmark = {
   title: string;
   url: string;
   description: string;
+  /** 오픈 그래프 썸네일 주소 */
+  image?: string | null;
 };

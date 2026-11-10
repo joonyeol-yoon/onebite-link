@@ -3,9 +3,10 @@ import { ChevronDownIcon } from "@/components/icons";
 
 type Props = {
   folders: Folder[];
+  defaultValue?: string;
 };
 
-export default function FolderSelect({ folders }: Props) {
+export default function FolderSelect({ folders, defaultValue = "" }: Props) {
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor="folderId" className="text-[14px] font-medium text-[var(--text)]">
@@ -16,7 +17,7 @@ export default function FolderSelect({ folders }: Props) {
           id="folderId"
           name="folderId"
           required
-          defaultValue=""
+          defaultValue={defaultValue}
           className="w-full appearance-none rounded-[10px] border border-[var(--border)] bg-[var(--bg)] py-3 pr-11 pl-4 text-[17px] text-[var(--text)] transition-[border-color,box-shadow] duration-300 ease-[ease] invalid:text-[var(--placeholder)] focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_var(--focus-ring)] focus:outline-none"
         >
           <option value="" disabled>
