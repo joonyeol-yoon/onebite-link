@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { folders } from "./mock-data";
+import { bookmarks, folders } from "./mock-data";
 
 export type CreateFolderState = {
   ok: boolean;
@@ -32,4 +32,17 @@ export async function createFolder(
 
   revalidatePath("/", "layout");
   return { ok: true, name: "" };
+}
+
+/** 폴더와 그 폴더에 담긴 링크를 함께 삭제한다. */
+export async function deleteFolder(id: number) {
+  const index = folders.findIndex((folder) => folder.id === id);
+  if (index === -1) return;
+  folders.splice(index, 1);
+
+  for (let i = bookmarks.length - 1; i >= 0; i--) {
+    if (bookmarks[i].folderId === id) bookmarks.splice(i, 1);
+  }
+
+  revalidatePath("/", "layout");
 }

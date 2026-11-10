@@ -8,9 +8,10 @@ type Props = {
   count: number;
   icon: React.ReactNode;
   children: React.ReactNode;
+  countClassName?: string;
 };
 
-export default function NavLink({ href, count, icon, children }: Props) {
+export default function NavLink({ href, count, icon, children, countClassName = "" }: Props) {
   const active = usePathname() === href;
 
   return (
@@ -30,7 +31,7 @@ export default function NavLink({ href, count, icon, children }: Props) {
       <span
         className={`min-w-6 rounded-full px-1.5 text-center text-xs tabular-nums ${
           active ? "bg-surface text-accent" : "text-ink-muted"
-        }`}
+        } ${countClassName}`}
       >
         {count}
       </span>

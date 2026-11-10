@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { FolderPlusIcon } from "@/components/icons";
+import Modal from "@/components/modal";
 import NewFolderForm from "./new-folder-form";
 
 export default function NewFolderButton() {
@@ -26,17 +27,9 @@ export default function NewFolderButton() {
         새 폴더
       </button>
 
-      <dialog
-        ref={dialogRef}
-        aria-labelledby="new-folder-title"
-        onClick={(e) => {
-          // 바깥(backdrop) 클릭 시 닫기
-          if (e.target === e.currentTarget) close();
-        }}
-        className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-line bg-surface p-0 text-ink shadow-[0_12px_40px_rgb(27_29_41/0.18)] backdrop:bg-ink/40"
-      >
+      <Modal ref={dialogRef} labelledBy="new-folder-title" onClose={close}>
         <NewFolderForm key={formKey} onDone={close} />
-      </dialog>
+      </Modal>
     </>
   );
 }
