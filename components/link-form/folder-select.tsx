@@ -4,17 +4,19 @@ import { ChevronDownIcon } from "@/components/icons";
 type Props = {
   folders: Folder[];
   defaultValue?: string;
+  /** 한 화면에 여러 개 렌더링될 때 겹치지 않도록 id를 지정한다. */
+  id?: string;
 };
 
-export default function FolderSelect({ folders, defaultValue = "" }: Props) {
+export default function FolderSelect({ folders, defaultValue = "", id = "folderId" }: Props) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor="folderId" className="text-[14px] font-medium text-[var(--text)]">
+      <label htmlFor={id} className="text-[14px] font-medium text-[var(--text)]">
         폴더
       </label>
       <div className="relative">
         <select
-          id="folderId"
+          id={id}
           name="folderId"
           required
           defaultValue={defaultValue}

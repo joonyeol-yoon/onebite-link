@@ -28,7 +28,7 @@ export default async function FolderPage({ params }: PageProps<"/folder/[id]">) 
   return (
     <>
       <PageTitle description={`링크 ${folderBookmarks.length}개`}>{folder.name}</PageTitle>
-      <LinkGrid bookmarks={folderBookmarks} />
+      <LinkGrid bookmarks={folderBookmarks} folders={folders} />
     </>
   );
 }

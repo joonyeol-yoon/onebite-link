@@ -1,14 +1,17 @@
 import Link from "next/link";
-import type { Bookmark } from "@/lib/types";
+import type { Bookmark, Folder } from "@/lib/types";
 import { PlusIcon } from "@/components/icons";
 import LinkCard from "./link-card";
+import EditLinkButton from "./edit-link-button";
 import DeleteLinkButton from "./delete-link-button";
 
 type Props = {
   bookmarks: Bookmark[];
+  /** 링크 수정 모달의 폴더 선택지 */
+  folders: Folder[];
 };
 
-export default function LinkGrid({ bookmarks }: Props) {
+export default function LinkGrid({ bookmarks, folders }: Props) {
   if (bookmarks.length === 0) {
     return (
       <div className="flex flex-col items-center gap-5 rounded-xl bg-[var(--card)] px-6 py-20 text-center">
@@ -34,10 +37,11 @@ export default function LinkGrid({ bookmarks }: Props) {
   return (
     <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
       {bookmarks.map((bookmark) => (
-        // 링크(<a>) 안에 버튼을 중첩할 수 없으므로 삭제 버튼은 형제로 두고 우측 상단에 겹쳐 배치한다.
+        // 링크(<a>) 안에 버튼을 중첩할 수 없으므로 수정·삭제 버튼은 형제로 두고 우측 상단에 겹쳐 배치한다.
         <li key={bookmark.id} className="link-item relative">
           <LinkCard bookmark={bookmark} />
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+            <EditLinkButton bookmark={bookmark} folders={folders} />
             <DeleteLinkButton bookmark={bookmark} />
           </div>
         </li>

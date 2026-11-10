@@ -99,6 +99,51 @@ export async function createBookmark(
   redirect(`/folder/${folderId}`);
 }
 
+export type UpdateBookmarkState = {
+  ok: boolean;
+  folderId: string;
+  title: string;
+  description: string;
+  error?: string;
+};
+
+const BOOKMARK_TITLE_MAX = 100;
+const BOOKMARK_DESCRIPTION_MAX = 300;
+
+/** 링크의 폴더·제목·설명을 수정한다. 주소와 썸네일은 바꾸지 않는다. */
+export async function updateBookmark(
+  id: number,
+  _prevState: UpdateBookmarkState,
+  formData: FormData,
+): Promise<UpdateBookmarkState> {
+  const folderIdRaw = String(formData.get("folderId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  const state = { ok: false, folderId: folderIdRaw, title, description };
+
+  const bookmark = bookmarks.find((b) => b.id === id);
+  if (!bookmark) return { ...state, error: "링크를 찾을 수 없어요." };
+
+  const folderId = Number(folderIdRaw);
+  if (!folders.some((folder) => folder.id === folderId)) {
+    return { ...state, error: "폴더를 선택해 주세요." };
+  }
+  if (!title) return { ...state, error: "제목을 입력해 주세요." };
+  if (title.length > BOOKMARK_TITLE_MAX) {
+    return { ...state, error: `제목은 ${BOOKMARK_TITLE_MAX}자 이내로 입력해 주세요.` };
+  }
+  if (description.length > BOOKMARK_DESCRIPTION_MAX) {
+    return { ...state, error: `설명은 ${BOOKMARK_DESCRIPTION_MAX}자 이내로 입력해 주세요.` };
+  }
+
+  bookmark.folderId = folderId;
+  bookmark.title = title;
+  bookmark.description = description;
+
+  revalidatePath("/", "layout");
+  return { ...state, ok: true };
+}
+
 export async function deleteBookmark(id: number) {
   const index = bookmarks.findIndex((bookmark) => bookmark.id === id);
   if (index === -1) return;
