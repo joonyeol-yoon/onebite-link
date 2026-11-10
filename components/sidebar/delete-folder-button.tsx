@@ -36,7 +36,7 @@ export default function DeleteFolderButton({ folder, count }: Props) {
         type="button"
         onClick={() => dialogRef.current?.showModal()}
         aria-label={`${folder.name} 폴더 삭제`}
-        className="absolute top-1/2 right-1.5 hidden size-7 -translate-y-1/2 place-items-center rounded-md text-ink-muted opacity-0 transition-[opacity,color,background-color] group-hover/folder:opacity-100 hover:bg-red-50 hover:text-red-600 focus-visible:opacity-100 md:grid"
+        className="hidden size-7 place-items-center rounded-md text-ink-muted opacity-0 transition-[opacity,color,background-color] group-focus-within/folder:opacity-100 group-hover/folder:opacity-100 hover:bg-red-50 hover:text-red-600 md:grid"
       >
         <TrashIcon className="size-4" />
       </button>

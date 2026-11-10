@@ -1,49 +1,55 @@
 "use client";
 
 import { useActionState } from "react";
-import { createFolder, type CreateFolderState } from "@/lib/actions";
+import { FOLDER_NAME_MAX_LENGTH, type FolderNameState } from "@/lib/folder-name";
 
 type Props = {
+  title: string;
+  titleId: string;
+  initialName?: string;
+  action: (prev: FolderNameState, formData: FormData) => Promise<FolderNameState>;
   onDone: () => void;
 };
 
-const initialState: CreateFolderState = { ok: false, name: "" };
-
-export default function NewFolderForm({ onDone }: Props) {
+/** 폴더 이름을 입력받는 모달 폼. 새 폴더 생성과 이름 수정에 함께 쓴다. */
+export default function FolderNameForm({ title, titleId, initialName = "", action, onDone }: Props) {
   const [state, formAction, pending] = useActionState(
-    async (prev: CreateFolderState, formData: FormData) => {
-      const result = await createFolder(prev, formData);
+    async (prev: FolderNameState, formData: FormData) => {
+      const result = await action(prev, formData);
       if (result.ok) onDone();
       return result;
     },
-    initialState,
+    { ok: false, name: initialName },
   );
+
+  const inputId = `${titleId}-input`;
+  const errorId = `${titleId}-error`;
 
   return (
     <form action={formAction} className="flex flex-col gap-6 p-6">
-      <h2 id="new-folder-title" className="text-lg font-bold tracking-tight text-ink">
-        새 폴더
+      <h2 id={titleId} className="text-lg font-bold tracking-tight text-ink">
+        {title}
       </h2>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="folder-name" className="text-sm font-semibold text-ink">
+        <label htmlFor={inputId} className="text-sm font-semibold text-ink">
           폴더 이름
         </label>
         <input
-          id="folder-name"
+          id={inputId}
           name="name"
           type="text"
           required
           autoFocus
-          maxLength={20}
+          maxLength={FOLDER_NAME_MAX_LENGTH}
           defaultValue={state.name}
           placeholder="예) 개발"
           aria-invalid={state.error ? true : undefined}
-          aria-describedby={state.error ? "folder-name-error" : undefined}
+          aria-describedby={state.error ? errorId : undefined}
           className="h-11 rounded-lg border border-line-strong bg-surface px-3.5 text-sm text-ink transition-[border-color,box-shadow] placeholder:text-ink-muted hover:border-ink-muted focus:border-accent focus:shadow-[0_0_0_3px_var(--color-accent-soft)] focus:outline-none aria-invalid:border-red-600"
         />
         {state.error && (
-          <p id="folder-name-error" aria-live="polite" className="text-xs text-red-600">
+          <p id={errorId} aria-live="polite" className="text-xs text-red-600">
             {state.error}
           </p>
         )}

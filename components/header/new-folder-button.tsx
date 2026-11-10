@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { FolderPlusIcon } from "@/components/icons";
 import Modal from "@/components/modal";
-import NewFolderForm from "./new-folder-form";
+import FolderNameForm from "@/components/folder-name-form";
+import { createFolder } from "@/lib/actions";
 
 export default function NewFolderButton() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -28,7 +29,13 @@ export default function NewFolderButton() {
       </button>
 
       <Modal ref={dialogRef} labelledBy="new-folder-title" onClose={close}>
-        <NewFolderForm key={formKey} onDone={close} />
+        <FolderNameForm
+          key={formKey}
+          title="새 폴더"
+          titleId="new-folder-title"
+          action={createFolder}
+          onDone={close}
+        />
       </Modal>
     </>
   );
