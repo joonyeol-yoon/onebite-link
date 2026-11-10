@@ -17,7 +17,7 @@ export default function Modal({ ref, labelledBy, onClose, children }: Props) {
         // 바깥(backdrop) 클릭 시 닫기
         if (e.target === e.currentTarget) onClose();
       }}
-      className="m-auto w-[calc(100%-3rem)] max-w-[440px] rounded-2xl bg-[var(--bg)] p-0 text-[var(--text)] shadow-[0_20px_60px_rgba(0,0,0,0.12)] backdrop:bg-[var(--overlay)] backdrop:backdrop-blur-sm"
+      className="m-auto w-[calc(100%-2.5rem)] max-w-[480px] rounded-3xl bg-[var(--bg)] p-0 text-[var(--text)] backdrop:bg-[var(--overlay)] backdrop:backdrop-blur-[10px]"
     >
       {children}
     </dialog>

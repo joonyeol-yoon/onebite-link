@@ -1,3 +1,5 @@
+import { INPUT_CLASS, LABEL_CLASS } from "@/lib/ui";
+
 type Props = {
   defaultValue?: string;
   error?: string;
@@ -6,7 +8,7 @@ type Props = {
 export default function UrlInput({ defaultValue = "", error }: Props) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor="url" className="text-[14px] font-medium text-[var(--text)]">
+      <label htmlFor="url" className={LABEL_CLASS}>
         링크
       </label>
       <input
@@ -19,7 +21,7 @@ export default function UrlInput({ defaultValue = "", error }: Props) {
         placeholder="https://example.com"
         aria-invalid={error ? true : undefined}
         aria-describedby="url-hint"
-        className="rounded-[10px] border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-[17px] text-[var(--text)] transition-[border-color,box-shadow] duration-300 ease-[ease] placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_var(--focus-ring)] focus:outline-none aria-invalid:border-[var(--error)]"
+        className={INPUT_CLASS}
       />
       {error ? (
         <p id="url-hint" aria-live="polite" className="text-[14px] leading-[1.4] text-[var(--error)]">

@@ -19,11 +19,11 @@ export default function LinkForm({ folders }: Props) {
   return (
     <form
       action={formAction}
-      className="flex flex-col gap-5 rounded-xl bg-[var(--card)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] md:p-8"
+      className="flex max-w-[640px] flex-col gap-5 rounded-3xl bg-[var(--card)] p-6 md:p-10"
     >
       <UrlInput defaultValue={state.url} error={state.error} />
       <FolderSelect folders={folders} defaultValue={state.folderId} />
-      <div className="mt-3 flex flex-col">
+      <div className="mt-5 flex flex-col">
         <SaveButton pending={pending} />
       </div>
     </form>

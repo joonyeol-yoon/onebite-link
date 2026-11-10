@@ -29,7 +29,7 @@ export default function EditLinkButton({ bookmark, folders }: Props) {
         type="button"
         onClick={open}
         aria-label={`${bookmark.title} 링크 수정`}
-        className="link-action icon-btn grid size-8 place-items-center rounded-full bg-[var(--nav-bg)] text-[var(--text-sub)] shadow-[0_1px_3px_rgba(0,0,0,0.08)] backdrop-blur-[20px]"
+        className="link-action icon-btn grid size-8 place-items-center rounded-full bg-[var(--glass-bg)] text-[var(--title)] backdrop-blur-[10px]"
       >
         <PencilIcon className="size-4" />
       </button>

@@ -50,7 +50,7 @@ export default function DeleteFolderButton({ folder, count }: Props) {
         onConfirm={confirm}
         onClose={close}
       >
-        <strong className="font-semibold text-[var(--text)]">{folder.name}</strong> 폴더를
+        <strong className="font-semibold text-[var(--title)]">{folder.name}</strong> 폴더를
         삭제합니다.
         {count > 0 && ` 폴더 안의 링크 ${count}개도 함께 삭제돼요.`} 삭제한 뒤에는 되돌릴 수 없어요.
       </ConfirmModal>

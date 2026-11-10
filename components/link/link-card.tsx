@@ -13,42 +13,44 @@ export default function LinkCard({ bookmark }: Props) {
       href={bookmark.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="card-hover flex h-full flex-col overflow-hidden rounded-xl bg-[var(--card)] shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+      className="card-hover flex h-full flex-col"
     >
-      {bookmark.image && (
-        // 썸네일은 임의의 외부 도메인이라 next/image(remotePatterns 필요) 대신 img를 쓴다.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={bookmark.image}
-          alt=""
-          loading="lazy"
-          referrerPolicy="no-referrer"
-          className="aspect-[1.91/1] w-full border-b border-[var(--divider)] bg-[var(--hover-bg)] object-cover"
-        />
-      )}
-      <div className="flex flex-1 flex-col gap-5 p-6">
-        {/* 우측 상단은 삭제 버튼 자리라, 외부 링크 표시는 도메인 옆에 둔다. */}
-        {!bookmark.image && (
+      {/* 이미지 영역: radius 24px, 썸네일이 없으면 첫 글자를 크게 보여 준다 */}
+      <div className="relative aspect-[1.91/1] overflow-hidden rounded-3xl bg-[var(--card)]">
+        {bookmark.image ? (
+          // 썸네일은 임의의 외부 도메인이라 next/image(remotePatterns 필요) 대신 img를 쓴다.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={bookmark.image}
+            alt=""
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            className="size-full object-cover"
+          />
+        ) : (
           <span
             aria-hidden
-            className="grid size-10 shrink-0 place-items-center rounded-[10px] border border-[var(--divider)] bg-[var(--bg)] text-[17px] font-semibold text-[var(--text)]"
+            className="grid size-full place-items-center text-[56px] leading-none font-semibold text-[var(--title)]"
           >
             {bookmark.title.charAt(0).toUpperCase()}
           </span>
         )}
-        <div className="flex flex-col gap-1">
-          <h3 className="line-clamp-2 text-[17px] leading-[1.35] font-semibold tracking-[-0.2px] text-[var(--text)]">
-            {bookmark.title}
-          </h3>
-          {bookmark.description && (
-            <p className="line-clamp-2 text-[14px] leading-[1.4] text-[var(--text-sub)]">
-              {bookmark.description}
-            </p>
-          )}
-        </div>
-        <span className="mt-auto flex items-center gap-1 text-[13px] text-[var(--text-sub)]">
-          <span className="truncate">{hostname}</span>
-          <ArrowUpRightIcon className="card-arrow size-3.5 shrink-0" />
+        {/* 호버 시 어두운 오버레이 + 좌측 하단 ↗ 아이콘 (우측 상단은 수정·삭제 버튼 자리) */}
+        <span aria-hidden className="card-fade absolute inset-0 bg-[var(--image-dim)]" />
+        <ArrowUpRightIcon className="card-fade absolute bottom-3.5 left-3.5 size-7 text-[var(--bg)]" />
+      </div>
+
+      <div className="mt-5 flex flex-1 flex-col gap-2">
+        <h3 className="card-title line-clamp-2 text-[20px] leading-[1.3] font-semibold tracking-[-0.015em] text-[var(--title)]">
+          {bookmark.title}
+        </h3>
+        {bookmark.description && (
+          <p className="line-clamp-2 text-[14px] leading-[1.5] text-[var(--text-sub)]">
+            {bookmark.description}
+          </p>
+        )}
+        <span className="mt-auto truncate pt-1 text-[13px] font-medium text-[var(--text-sub)]">
+          {hostname}
         </span>
       </div>
     </a>

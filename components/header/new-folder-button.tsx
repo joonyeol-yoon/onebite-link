@@ -5,6 +5,7 @@ import { FolderPlusIcon } from "@/components/icons";
 import Modal from "@/components/modal";
 import FolderNameForm from "@/components/folder-name-form";
 import { createFolder } from "@/lib/actions";
+import { BUTTON_SMALL } from "@/lib/ui";
 
 export default function NewFolderButton() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -22,9 +23,9 @@ export default function NewFolderButton() {
       <button
         type="button"
         onClick={open}
-        className="btn-secondary flex items-center gap-1 text-[14px] font-medium text-[var(--accent)]"
+        className={`btn-outline ${BUTTON_SMALL} border-[var(--title)] text-[var(--title)]`}
       >
-        <FolderPlusIcon className="size-4" />
+        <FolderPlusIcon className="size-3.5" />
         새 폴더
       </button>
 

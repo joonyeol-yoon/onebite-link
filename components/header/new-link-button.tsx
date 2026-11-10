@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { PlusIcon } from "@/components/icons";
+import { BUTTON_SMALL } from "@/lib/ui";
 
 export default function NewLinkButton() {
   return (
     <Link
       href="/new"
-      className="btn-primary flex items-center gap-1 rounded-full bg-[var(--accent)] px-4 py-1.5 text-[14px] font-medium text-white"
+      className={`btn-outline-accent ${BUTTON_SMALL} border-[var(--accent)] text-[var(--accent)]`}
     >
-      <PlusIcon className="size-4" />
+      <PlusIcon className="size-3.5" />
       새 링크
     </Link>
   );

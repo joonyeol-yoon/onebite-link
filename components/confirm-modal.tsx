@@ -1,6 +1,7 @@
 "use client";
 
 import Modal from "./modal";
+import { BUTTON_DANGER, BUTTON_OUTLINE, MODAL_TITLE_CLASS } from "@/lib/ui";
 
 type Props = {
   ref: React.Ref<HTMLDialogElement>;
@@ -30,30 +31,17 @@ export default function ConfirmModal({
     <Modal ref={ref} labelledBy={titleId} onClose={onClose}>
       <div className="flex flex-col gap-5 p-8">
         <div className="flex flex-col gap-3">
-          <h2
-            id={titleId}
-            className="text-[24px] leading-[1.2] font-semibold tracking-[-0.3px] text-[var(--text)]"
-          >
+          <h2 id={titleId} className={MODAL_TITLE_CLASS}>
             {title}
           </h2>
-          <p className="text-[17px] leading-[1.5] text-[var(--text-sub)]">{children}</p>
+          <p className="text-[16px] leading-[1.625] text-[var(--text-sub)]">{children}</p>
         </div>
 
-        <div className="mt-3 flex items-center justify-end gap-6">
-          <button
-            type="button"
-            onClick={onClose}
-            autoFocus
-            className="btn-secondary text-[17px] text-[var(--accent)]"
-          >
+        <div className="mt-3 flex justify-end gap-2">
+          <button type="button" onClick={onClose} autoFocus className={BUTTON_OUTLINE}>
             취소
           </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={pending}
-            className="btn-danger rounded-full bg-[var(--error)] px-6 py-3 text-[17px] text-white disabled:cursor-not-allowed disabled:opacity-30"
-          >
+          <button type="button" onClick={onConfirm} disabled={pending} className={BUTTON_DANGER}>
             {pending ? pendingLabel : confirmLabel}
           </button>
         </div>

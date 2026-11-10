@@ -1,45 +1,49 @@
 @import "tailwindcss";
 
-/* ───────────── 디자인 토큰 (Apple 스타일, 라이트모드 전용) ─────────────
+/* ───────────── 디자인 토큰 (ULTRAFIT 스타일, 라이트모드 전용) ─────────────
    컴포넌트에서는 Tailwind arbitrary value로만 참조한다. 예) bg-[var(--accent)] */
 :root {
-  --font: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font: var(--font-poppins), "Pretendard", "나눔고딕", NanumGothic, Arial, sans-serif;
 
   --bg: #ffffff;
-  --card: #fbfbfd;
-  --text: #1d1d1f;
-  --text-sub: #86868b;
-  /* 가이드 값(#AEAEB2)은 흰 배경 대비 2.2:1이라 3:1을 맞추도록 어둡게 조정 */
-  --placeholder: #8e8e93;
-  --border: #d2d2d7;
-  --divider: #e8e8ed;
-  --accent: #0071e3;
-  --accent-hover: #0077ed;
-  --error: #ff3b30;
-  --error-hover: #e8352b;
-  --error-soft: #fff2f1;
-  --success: #34c759;
+  --card: #f5f5f5;
+  --surface-strong: #232323;
+  --title: #000000;
+  --text: #232323;
+  --text-sub: #666666;
+  --placeholder: #8a8a8a;
+  --border: #dddddd;
+  --divider: #e5e5e5;
+  --accent: #1d7ad6;
+  --accent-hover: #277cd1;
+  --on-accent: #ffffff;
+  --error: #d93025;
+  --error-hover: #b9271e;
+  --error-soft: #fdecea;
+  --warning: #e88419;
+  --success: #24a00d;
 
-  --badge-bg: #f5f5f7;
-  --hover-bg: #f5f5f7;
-  --card-hover: #f5f5f7;
-  --nav-bg: rgba(255, 255, 255, 0.72);
-  --overlay: rgba(0, 0, 0, 0.32);
-  --focus-ring: rgba(0, 113, 227, 0.2);
+  --badge-bg: #f3f3f3;
+  --nav-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --overlay: rgba(0, 0, 0, 0.6);
+  --image-dim: rgba(0, 0, 0, 0.15);
 }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
-  font-size: 17px;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.625;
+  letter-spacing: -0.015em;
+  word-break: keep-all;
   caret-color: var(--accent);
 }
 
 ::selection {
-  background: var(--focus-ring);
-  color: var(--text);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 :focus-visible {
@@ -53,70 +57,92 @@ body {
 }
 
 /* ───────────── hover 효과 ─────────────
-   가이드 규칙: hover는 이 파일의 CSS 클래스로만 정의한다. 트랜지션은 0.3s ease. */
+   가이드 규칙: hover는 이 파일의 CSS 클래스로만 정의한다.
+   색상·배경 변경은 0.4s ease-in-out, 아이콘·오버레이 페이드는 0.3s. */
 
 /* 기본 버튼 (액센트 pill) */
 .btn-primary {
-  transition: background-color 0.3s ease, opacity 0.3s ease;
+  transition: background-color 0.4s ease-in-out, opacity 0.4s ease-in-out;
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
 }
 
-/* 보조 버튼 (투명 배경 + 액센트 텍스트) */
-.btn-secondary:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+/* 아웃라인 버튼 (검정) — 호버 시 채워지고 텍스트 반전 */
+.btn-outline {
+  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+}
+.btn-outline:hover:not(:disabled) {
+  background: var(--title);
+  color: var(--bg);
+}
+
+/* 아웃라인 버튼 (액센트) — 호버 시 채워지고 텍스트 반전 */
+.btn-outline-accent {
+  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+}
+.btn-outline-accent:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 /* 위험 버튼 (삭제) */
 .btn-danger {
-  transition: background-color 0.3s ease, opacity 0.3s ease;
+  transition: background-color 0.4s ease-in-out, opacity 0.4s ease-in-out;
 }
 .btn-danger:hover:not(:disabled) {
   background: var(--error-hover);
 }
 
-/* 사이드바 항목 */
-.nav-item {
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* 텍스트 링크 — 호버 시 액센트 컬러 */
+.link-hover {
+  transition: color 0.4s ease-in-out;
 }
-.nav-item:hover {
-  background: var(--hover-bg);
-  color: var(--text);
+.link-hover:hover {
+  color: var(--accent);
+}
+
+/* 사이드바 항목 — 호버 시 텍스트가 액센트 컬러로 */
+.nav-item {
+  transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
+}
+.nav-item:hover,
+.nav-item:hover .nav-icon {
+  color: var(--accent);
 }
 
 /* 아이콘 버튼 (수정·삭제) */
 .icon-btn {
-  transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  transition: opacity 0.3s ease-in-out, background-color 0.4s ease-in-out, color 0.4s ease-in-out;
 }
 .icon-btn:hover {
-  background: var(--hover-bg);
-  color: var(--text);
+  background: var(--title);
+  color: var(--bg);
 }
 .icon-btn-danger:hover {
-  background: var(--error-soft);
-  color: var(--error);
+  background: var(--error);
+  color: var(--on-accent);
 }
 
-/* 링크 카드 */
-.card-hover {
-  transition: background-color 0.3s ease;
+/* 링크 카드 — 호버 시 제목이 액센트로, 우측 상단 ↗ 화살표·썸네일 오버레이가 서서히 나타남 */
+.card-hover .card-title {
+  transition: color 0.4s ease-in-out;
 }
-.card-hover:hover,
-.link-item:hover .card-hover {
-  background: var(--card-hover);
+.card-hover:hover .card-title,
+.link-item:hover .card-title {
+  color: var(--accent);
 }
-.card-hover .card-arrow {
+.card-hover .card-fade {
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease-in-out;
 }
-.card-hover:hover .card-arrow,
-.card-hover:focus-visible .card-arrow {
+.card-hover:hover .card-fade,
+.card-hover:focus-visible .card-fade,
+.link-item:hover .card-fade {
   opacity: 1;
 }
 
-/* 링크 카드: 마우스를 올리거나 포커스가 들어오면 우측 상단에 삭제 버튼을 보여 준다.
+/* 링크 카드: 마우스를 올리거나 포커스가 들어오면 수정·삭제 버튼을 보여 준다.
    마우스가 없는 터치 기기에서는 항상 보여 준다. */
 .link-action {
   opacity: 0;
@@ -131,7 +157,7 @@ body {
   }
 }
 
-/* 사이드바 폴더:마우스를 올리거나 포커스가 들어오면 개수 대신 수정·삭제 버튼을 보여 준다 */
+/* 사이드바 폴더: 마우스를 올리거나 포커스가 들어오면 개수 대신 수정·삭제 버튼을 보여 준다 */
 .folder-action {
   opacity: 0;
 }
