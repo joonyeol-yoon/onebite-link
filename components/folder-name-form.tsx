@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { FOLDER_NAME_MAX_LENGTH, type FolderNameState } from "@/lib/folder-name";
 import {
   BUTTON_OUTLINE,
@@ -20,11 +20,24 @@ type Props = {
 
 /** 폴더 이름을 입력받는 모달 폼. 새 폴더 생성과 이름 수정에 함께 쓴다. */
 export default function FolderNameForm({ title, titleId, initialName = "", action, onDone }: Props) {
+  // 중복 제출 방지: 버튼이 비활성화되기 전에 연달아 누르면 제출이 대기열에 쌓여 차례로 실행된다.
+  // 실행 중이거나 이미 성공한 폼이면 쌓인 제출을 무시한다. (모달을 열 때마다 폼이 새로 마운트되어 초기화된다.)
+  const lockedRef = useRef(false);
+
   const [state, formAction, pending] = useActionState(
     async (prev: FolderNameState, formData: FormData) => {
-      const result = await action(prev, formData);
-      if (result.ok) onDone();
-      return result;
+      if (lockedRef.current) return prev;
+      lockedRef.current = true;
+
+      try {
+        const result = await action(prev, formData);
+        if (result.ok) onDone();
+        else lockedRef.current = false;
+        return result;
+      } catch (error) {
+        lockedRef.current = false;
+        throw error;
+      }
     },
     { ok: false, name: initialName },
   );

@@ -1,33 +1,53 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 import { BlockedUrlError, fetchOpenGraph, parseHttpUrl, type OpenGraph } from "./og";
 import { bookmarks, folders } from "./mock-data";
 import { FOLDER_NAME_MAX_LENGTH, type FolderNameState } from "./folder-name";
 
-/** 폴더 이름을 검증한다. 문제가 있으면 에러 메시지를, 없으면 null을 반환한다. */
-function validateFolderName(name: string, excludeId?: number) {
+/** 폴더 이름의 형식(빈 값, 길이)을 검증한다. 문제가 있으면 에러 메시지를, 없으면 null을 반환한다. */
+function validateFolderNameFormat(name: string) {
   if (!name) return "폴더 이름을 입력해 주세요.";
   if (name.length > FOLDER_NAME_MAX_LENGTH) {
     return `폴더 이름은 ${FOLDER_NAME_MAX_LENGTH}자 이내로 입력해 주세요.`;
   }
+  return null;
+}
+
+/** 폴더 이름을 검증한다. 문제가 있으면 에러 메시지를, 없으면 null을 반환한다. */
+function validateFolderName(name: string, excludeId?: number) {
+  const formatError = validateFolderNameFormat(name);
+  if (formatError) return formatError;
   if (folders.some((folder) => folder.id !== excludeId && folder.name === name)) {
     return "같은 이름의 폴더가 이미 있어요.";
   }
   return null;
 }
 
+/** 새 폴더를 folders 테이블에 추가한다. */
 export async function createFolder(
   _prevState: FolderNameState,
   formData: FormData,
 ): Promise<FolderNameState> {
   const name = String(formData.get("name") ?? "").trim();
-  const error = validateFolderName(name);
-  if (error) return { ok: false, name, error };
+  const formatError = validateFolderNameFormat(name);
+  if (formatError) return { ok: false, name, error: formatError };
 
-  const id = folders.reduce((max, folder) => Math.max(max, folder.id), 0) + 1;
-  folders.push({ id, name });
+  const supabase = createClient(await cookies());
+
+  const { data: existing, error: selectError } = await supabase
+    .from("folders")
+    .select("id")
+    .eq("name", name)
+    .limit(1);
+  if (selectError) return { ok: false, name, error: "폴더를 추가하지 못했어요. 다시 시도해 주세요." };
+  if (existing.length > 0) return { ok: false, name, error: "같은 이름의 폴더가 이미 있어요." };
+
+  const { error: insertError } = await supabase.from("folders").insert({ name });
+  if (insertError) return { ok: false, name, error: "폴더를 추가하지 못했어요. 다시 시도해 주세요." };
 
   revalidatePath("/", "layout");
   return { ok: true, name: "" };
