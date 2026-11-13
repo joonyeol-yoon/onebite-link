@@ -98,9 +98,18 @@ export async function createBookmark(
   if (!url) return { ...state, error: "http:// 또는 https:// 로 시작하는 주소를 입력해 주세요." };
 
   const folderId = Number(folderIdRaw);
-  if (!folders.some((folder) => folder.id === folderId)) {
+  if (!Number.isInteger(folderId) || folderId <= 0) {
     return { ...state, error: "폴더를 선택해 주세요." };
   }
+
+  const supabase = createClient(await cookies());
+  const { data: folder, error: folderError } = await supabase
+    .from("folders")
+    .select("id")
+    .eq("id", folderId)
+    .maybeSingle();
+  if (folderError) return { ...state, error: "링크를 저장하지 못했어요. 다시 시도해 주세요." };
+  if (!folder) return { ...state, error: "폴더를 선택해 주세요." };
 
   let og: OpenGraph;
   try {
@@ -110,15 +119,14 @@ export async function createBookmark(
     og = { url: url.href, title: url.hostname.replace(/^www\./, ""), description: "", image: null };
   }
 
-  const id = bookmarks.reduce((max, bookmark) => Math.max(max, bookmark.id), 0) + 1;
-  bookmarks.unshift({
-    id,
-    folderId,
+  const { error: insertError } = await supabase.from("links").insert({
     url: og.url,
     title: og.title,
-    description: og.description,
-    image: og.image,
+    description: og.description || null,
+    thumbnail_url: og.image,
+    folder_id: folderId,
   });
+  if (insertError) return { ...state, error: "링크를 저장하지 못했어요. 다시 시도해 주세요." };
 
   revalidatePath("/", "layout");
   redirect(`/folder/${folderId}`);

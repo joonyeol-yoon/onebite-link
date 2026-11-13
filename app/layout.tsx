@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Suspense } from "react";
 import Header from "@/components/header/header";
-import Sidebar from "@/components/sidebar/sidebar";
+import Sidebar, { SidebarPlaceholder } from "@/components/sidebar/sidebar";
 import { getFolders } from "@/lib/data";
 import { bookmarks } from "@/lib/mock-data";
 import "./globals.css";
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full">
         <Header />
         <div className="md:flex">
-          <Suspense fallback={<Sidebar folders={[]} bookmarks={bookmarks} />}>
+          <Suspense fallback={<SidebarPlaceholder />}>
             <FolderSidebar />
           </Suspense>
           <main className="min-w-0 flex-1 px-5 pt-[60px] pb-[100px] md:px-[30px] md:pt-20">

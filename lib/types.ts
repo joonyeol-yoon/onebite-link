@@ -5,7 +5,8 @@ export type Folder = {
 
 export type Bookmark = {
   id: number;
-  folderId: number;
+  /** 폴더가 삭제되면 null이 된다. */
+  folderId: number | null;
   title: string;
   url: string;
   description: string;
