@@ -30,7 +30,8 @@ export default function EditLinkForm({ bookmark, folders, titleId, onDone }: Pro
     },
     {
       ok: false,
-      folderId: String(bookmark.folderId),
+      // 폴더가 삭제된 링크는 folderId가 null이므로 "폴더를 선택하세요"가 선택되도록 빈 값을 쓴다.
+      folderId: bookmark.folderId === null ? "" : String(bookmark.folderId),
       title: bookmark.title,
       description: bookmark.description,
     },

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { BlockedUrlError, fetchOpenGraph, parseHttpUrl, type OpenGraph } from "./og";
-import { bookmarks, folders } from "./mock-data";
+import { bookmarks } from "./mock-data";
 import { FOLDER_NAME_MAX_LENGTH, type FolderNameState } from "./folder-name";
 
 /** 폴더 이름의 형식(빈 값, 길이)을 검증한다. 문제가 있으면 에러 메시지를, 없으면 null을 반환한다. */
@@ -154,11 +154,8 @@ export async function updateBookmark(
   const description = String(formData.get("description") ?? "").trim();
   const state = { ok: false, folderId: folderIdRaw, title, description };
 
-  const bookmark = bookmarks.find((b) => b.id === id);
-  if (!bookmark) return { ...state, error: "링크를 찾을 수 없어요." };
-
   const folderId = Number(folderIdRaw);
-  if (!folders.some((folder) => folder.id === folderId)) {
+  if (!Number.isInteger(folderId) || folderId <= 0) {
     return { ...state, error: "폴더를 선택해 주세요." };
   }
   if (!title) return { ...state, error: "제목을 입력해 주세요." };
@@ -169,9 +166,22 @@ export async function updateBookmark(
     return { ...state, error: `설명은 ${BOOKMARK_DESCRIPTION_MAX}자 이내로 입력해 주세요.` };
   }
 
-  bookmark.folderId = folderId;
-  bookmark.title = title;
-  bookmark.description = description;
+  const supabase = createClient(await cookies());
+  const { data: folder, error: folderError } = await supabase
+    .from("folders")
+    .select("id")
+    .eq("id", folderId)
+    .maybeSingle();
+  if (folderError) return { ...state, error: "링크를 수정하지 못했어요. 다시 시도해 주세요." };
+  if (!folder) return { ...state, error: "폴더를 선택해 주세요." };
+
+  const { data: updated, error: updateError } = await supabase
+    .from("links")
+    .update({ folder_id: folderId, title, description: description || null })
+    .eq("id", id)
+    .select("id");
+  if (updateError) return { ...state, error: "링크를 수정하지 못했어요. 다시 시도해 주세요." };
+  if (updated.length === 0) return { ...state, error: "링크를 찾을 수 없어요." };
 
   revalidatePath("/", "layout");
   return { ...state, ok: true };
