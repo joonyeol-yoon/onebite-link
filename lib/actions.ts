@@ -187,10 +187,11 @@ export async function updateBookmark(
   return { ...state, ok: true };
 }
 
+/** links 테이블에서 링크를 삭제한다. */
 export async function deleteBookmark(id: number) {
-  const index = bookmarks.findIndex((bookmark) => bookmark.id === id);
-  if (index === -1) return;
-  bookmarks.splice(index, 1);
+  const supabase = createClient(await cookies());
+  const { error } = await supabase.from("links").delete().eq("id", id);
+  if (error) throw new Error(`링크를 삭제하지 못했어요: ${error.message}`);
 
   revalidatePath("/", "layout");
 }
