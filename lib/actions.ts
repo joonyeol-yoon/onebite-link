@@ -177,11 +177,12 @@ export async function deleteBookmark(id: number) {
   revalidatePath("/", "layout");
 }
 
-/** 폴더와 그 폴더에 담긴 링크를 함께 삭제한다. */
+/** folders 테이블에서 폴더를 삭제하고, 그 폴더에 담긴 링크도 함께 삭제한다. */
 export async function deleteFolder(id: number) {
-  const index = folders.findIndex((folder) => folder.id === id);
-  if (index === -1) return;
-  folders.splice(index, 1);
+  const supabase = createClient(await cookies());
+  const { data: deleted, error } = await supabase.from("folders").delete().eq("id", id).select("id");
+  if (error) throw new Error(`폴더를 삭제하지 못했어요: ${error.message}`);
+  if (deleted.length === 0) return;
 
   for (let i = bookmarks.length - 1; i >= 0; i--) {
     if (bookmarks[i].folderId === id) bookmarks.splice(i, 1);
