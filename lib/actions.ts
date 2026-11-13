@@ -17,16 +17,6 @@ function validateFolderNameFormat(name: string) {
   return null;
 }
 
-/** 폴더 이름을 검증한다. 문제가 있으면 에러 메시지를, 없으면 null을 반환한다. */
-function validateFolderName(name: string, excludeId?: number) {
-  const formatError = validateFolderNameFormat(name);
-  if (formatError) return formatError;
-  if (folders.some((folder) => folder.id !== excludeId && folder.name === name)) {
-    return "같은 이름의 폴더가 이미 있어요.";
-  }
-  return null;
-}
-
 /** 새 폴더를 folders 테이블에 추가한다. */
 export async function createFolder(
   _prevState: FolderNameState,
@@ -53,19 +43,34 @@ export async function createFolder(
   return { ok: true, name: "" };
 }
 
+/** folders 테이블에서 폴더 이름을 수정한다. */
 export async function updateFolder(
   id: number,
   _prevState: FolderNameState,
   formData: FormData,
 ): Promise<FolderNameState> {
   const name = String(formData.get("name") ?? "").trim();
-  const folder = folders.find((f) => f.id === id);
-  if (!folder) return { ok: false, name, error: "폴더를 찾을 수 없어요." };
+  const formatError = validateFolderNameFormat(name);
+  if (formatError) return { ok: false, name, error: formatError };
 
-  const error = validateFolderName(name, id);
-  if (error) return { ok: false, name, error };
+  const supabase = createClient(await cookies());
 
-  folder.name = name;
+  const { data: existing, error: selectError } = await supabase
+    .from("folders")
+    .select("id")
+    .eq("name", name)
+    .neq("id", id)
+    .limit(1);
+  if (selectError) return { ok: false, name, error: "폴더 이름을 수정하지 못했어요. 다시 시도해 주세요." };
+  if (existing.length > 0) return { ok: false, name, error: "같은 이름의 폴더가 이미 있어요." };
+
+  const { data: updated, error: updateError } = await supabase
+    .from("folders")
+    .update({ name })
+    .eq("id", id)
+    .select("id");
+  if (updateError) return { ok: false, name, error: "폴더 이름을 수정하지 못했어요. 다시 시도해 주세요." };
+  if (updated.length === 0) return { ok: false, name, error: "폴더를 찾을 수 없어요." };
 
   revalidatePath("/", "layout");
   return { ok: true, name };
