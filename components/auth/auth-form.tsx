@@ -30,6 +30,8 @@ type Props = {
   secondaryLink?: { href: string; label: string };
   /** 페이지를 열자마자 토스트로 보여 줄 오류 메시지 */
   initialError?: string;
+  /** 제출 버튼 바로 아래에 보여 줄 요소 (예: 소셜 로그인 버튼) */
+  belowSubmit?: React.ReactNode;
 };
 
 /** 로그인·회원가입이 함께 쓰는 폼 UI. 모든 칸을 채워야 제출 버튼이 활성화된다. */
@@ -45,6 +47,7 @@ export default function AuthForm({
   onSubmit,
   secondaryLink,
   initialError,
+  belowSubmit,
 }: Props) {
   const [values, setValues] = useState<AuthValues>(() =>
     Object.fromEntries(fields.map((field) => [field.name, ""])),
@@ -80,30 +83,39 @@ export default function AuthForm({
         <p className="text-[16px] text-[var(--text-sub)]">{description}</p>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-        {fields.map((field) => (
-          <div key={field.name} className="flex flex-col gap-2">
-            <label htmlFor={field.name} className={LABEL_CLASS}>
-              {field.label}
-            </label>
-            <input
-              id={field.name}
-              name={field.name}
-              type={field.type}
-              required
-              value={values[field.name]}
-              onChange={(e) => setValues((prev) => ({ ...prev, [field.name]: e.target.value }))}
-              placeholder={field.placeholder}
-              autoComplete={field.autoComplete}
-              className={INPUT_CLASS}
-            />
-          </div>
-        ))}
+      <div className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+          {fields.map((field) => (
+            <div key={field.name} className="flex flex-col gap-2">
+              <label htmlFor={field.name} className={LABEL_CLASS}>
+                {field.label}
+              </label>
+              <input
+                id={field.name}
+                name={field.name}
+                type={field.type}
+                required
+                value={values[field.name]}
+                onChange={(e) => setValues((prev) => ({ ...prev, [field.name]: e.target.value }))}
+                placeholder={field.placeholder}
+                autoComplete={field.autoComplete}
+                className={INPUT_CLASS}
+              />
+            </div>
+          ))}
 
-        <button type="submit" disabled={!allFilled || pending} className={`${BUTTON_PRIMARY} mt-3 w-full`}>
-          {pending ? pendingLabel : submitLabel}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={!allFilled || pending}
+            className={`${BUTTON_PRIMARY} mt-3 w-full`}
+          >
+            {pending ? pendingLabel : submitLabel}
+          </button>
+        </form>
+
+        {/* 제출 버튼 바로 아래에 두는 추가 동작 (예: 소셜 로그인). 폼 안에 폼을 둘 수 없어 바깥에 둔다. */}
+        {belowSubmit}
+      </div>
 
       <div className="flex flex-col items-center gap-3">
         {secondaryLink && (

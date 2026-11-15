@@ -1,12 +1,8 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { safeNextPath } from "@/lib/safe-next-path";
 import { createClient } from "@/utils/supabase/server";
-
-/** 같은 사이트 안의 경로만 허용해 외부 주소로 보내는 open redirect를 막는다. */
-function safeNextPath(next: string | null) {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
-}
 
 /**
  * 인증 메일(비밀번호 재설정 등)의 링크가 도착하는 곳.

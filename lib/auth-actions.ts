@@ -77,6 +77,28 @@ export async function login(input: LoginInput): Promise<AuthResult> {
   redirect("/");
 }
 
+/** 현재 요청의 사이트 주소(예: http://localhost:3000). 인증 후 돌아올 주소를 만들 때 쓴다. */
+async function getOrigin() {
+  const headerList = await headers();
+  return (
+    headerList.get("origin") ??
+    `${headerList.get("x-forwarded-proto") ?? "http"}://${headerList.get("host")}`
+  );
+}
+
+/** 카카오 로그인 화면으로 보낸다. 로그인을 마치면 /auth/callback을 거쳐 인덱스 페이지로 돌아온다. */
+export async function loginWithKakao() {
+  const origin = await getOrigin();
+  const supabase = createClient(await cookies());
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "kakao",
+    options: { redirectTo: `${origin}/auth/callback?next=/` },
+  });
+
+  if (error || !data.url) redirect("/login?error=oauth");
+  redirect(data.url);
+}
+
 /** 비밀번호 재설정 메일 발송 오류를 한국어 메시지로 바꾼다. */
 function toKoreanResetEmailError(code: string | undefined) {
   switch (code) {
@@ -97,11 +119,7 @@ export async function sendPasswordResetEmail(input: { email: string }): Promise<
   if (!email) return { error: "이메일을 입력해 주세요." };
 
   // 메일의 링크를 누르면 /auth/confirm에서 세션을 만든 뒤 재설정 페이지로 이동한다.
-  const headerList = await headers();
-  const origin =
-    headerList.get("origin") ??
-    `${headerList.get("x-forwarded-proto") ?? "http"}://${headerList.get("host")}`;
-
+  const origin = await getOrigin();
   const supabase = createClient(await cookies());
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/confirm?next=/reset-password`,

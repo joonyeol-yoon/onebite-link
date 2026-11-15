@@ -2,6 +2,7 @@
 
 import { login } from "@/lib/auth-actions";
 import AuthForm, { type AuthField, type AuthValues } from "./auth-form";
+import KakaoLoginButton from "./kakao-login-button";
 
 const FIELDS: AuthField[] = [
   {
@@ -31,7 +32,12 @@ async function handleLogin(values: AuthValues) {
   }
 }
 
-export default function LoginForm() {
+type Props = {
+  /** 소셜 로그인 실패 등으로 돌아왔을 때 보여 줄 오류 메시지 */
+  initialError?: string;
+};
+
+export default function LoginForm({ initialError }: Props) {
   return (
     <AuthForm
       title="로그인"
@@ -41,6 +47,8 @@ export default function LoginForm() {
       pendingLabel="로그인하는 중…"
       onSubmit={handleLogin}
       secondaryLink={{ href: "/forgot-password", label: "비밀번호를 잊으셨나요?" }}
+      belowSubmit={<KakaoLoginButton />}
+      initialError={initialError}
       footerText="아직 계정이 없으신가요?"
       footerLinkLabel="회원가입"
       footerHref="/signup"
