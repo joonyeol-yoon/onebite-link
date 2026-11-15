@@ -77,6 +77,14 @@ export async function login(input: LoginInput): Promise<AuthResult> {
   redirect("/");
 }
 
+/** 로그아웃한 뒤 로그인 페이지로 이동한다. */
+export async function logout() {
+  const supabase = createClient(await cookies());
+  // 서버 쪽 세션 폐기가 실패해도 세션 쿠키는 지워지므로 그대로 로그인 페이지로 보낸다.
+  await supabase.auth.signOut();
+  redirect("/login");
+}
+
 /** 이메일·비밀번호로 회원가입한다. 성공하면 인덱스 페이지로 이동하고, 실패하면 오류 메시지를 반환한다. */
 export async function signup(input: SignupInput): Promise<SignupResult> {
   const email = String(input?.email ?? "").trim();
