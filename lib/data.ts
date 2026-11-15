@@ -1,26 +1,35 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserId } from "./current-user";
 import type { Bookmark, Folder } from "./types";
 
-/** folders 테이블의 폴더를 추가된 순서(id 오름차순)대로 불러온다. */
+/** 현재 로그인한 사용자의 폴더를 추가된 순서(id 오름차순)대로 불러온다. 로그인하지 않았으면 빈 배열. */
 export async function getFolders(): Promise<Folder[]> {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
   const supabase = createClient(await cookies());
   const { data, error } = await supabase
     .from("folders")
     .select("id, name")
+    .eq("user_id", userId)
     .order("id", { ascending: true });
 
   if (error) throw new Error(`폴더 목록을 불러오지 못했어요: ${error.message}`);
   return data;
 }
 
-/** folders 테이블에서 폴더 하나를 불러온다. 없으면 null을 반환한다. */
+/** 현재 로그인한 사용자의 폴더 하나를 불러온다. 없거나 다른 사용자의 폴더면 null을 반환한다. */
 export async function getFolder(id: number): Promise<Folder | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
   const supabase = createClient(await cookies());
   const { data, error } = await supabase
     .from("folders")
     .select("id, name")
     .eq("id", id)
+    .eq("user_id", userId)
     .maybeSingle();
 
   if (error) throw new Error(`폴더를 불러오지 못했어요: ${error.message}`);
@@ -48,12 +57,19 @@ function toBookmark(row: LinkRow): Bookmark {
   };
 }
 
-/** links 테이블의 링크를 최근에 추가한 순서대로 불러온다. folderId를 주면 그 폴더의 링크만 불러온다. */
+/**
+ * 현재 로그인한 사용자의 링크를 최근에 추가한 순서대로 불러온다.
+ * folderId를 주면 그 폴더의 링크만 불러온다. 로그인하지 않았으면 빈 배열.
+ */
 export async function getLinks(folderId?: number): Promise<Bookmark[]> {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
   const supabase = createClient(await cookies());
   let query = supabase
     .from("links")
     .select("id, url, title, description, thumbnail_url, folder_id")
+    .eq("user_id", userId)
     .order("id", { ascending: false });
   if (folderId !== undefined) query = query.eq("folder_id", folderId);
 

@@ -1,8 +1,19 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+
+/**
+ * 로그인한 계정이 바뀐 뒤(로그인·회원가입·로그아웃 등) 이동한다.
+ * 브라우저에 남은 이전 계정의 페이지 데이터(라우터 캐시)를 모두 버려, 이동한 뒤 데이터를 처음부터 다시 불러오게 한다.
+ * redirect는 내부적으로 예외를 던지므로 try/catch 밖에서 호출한다.
+ */
+function redirectAfterAccountChange(path: string): never {
+  revalidatePath("/", "layout");
+  redirect(path);
+}
 
 export type SignupInput = {
   email: string;
@@ -73,8 +84,7 @@ export async function login(input: LoginInput): Promise<AuthResult> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: toKoreanLoginError(error.code) };
 
-  // redirect는 내부적으로 예외를 던지므로 try/catch 밖에서 호출한다.
-  redirect("/");
+  redirectAfterAccountChange("/");
 }
 
 /** 현재 요청의 사이트 주소(예: http://localhost:3000). 인증 후 돌아올 주소를 만들 때 쓴다. */
@@ -162,7 +172,8 @@ export async function updatePassword(input: {
   const { error } = await supabase.auth.updateUser({ password });
   if (error) return { error: toKoreanUpdatePasswordError(error.code) };
 
-  redirect("/");
+  // 재설정 링크로 다른 계정에 로그인했을 수 있으므로 데이터를 다시 불러온다.
+  redirectAfterAccountChange("/");
 }
 
 /** 로그아웃한 뒤 로그인 페이지로 이동한다. */
@@ -170,7 +181,7 @@ export async function logout() {
   const supabase = createClient(await cookies());
   // 서버 쪽 세션 폐기가 실패해도 세션 쿠키는 지워지므로 그대로 로그인 페이지로 보낸다.
   await supabase.auth.signOut();
-  redirect("/login");
+  redirectAfterAccountChange("/login");
 }
 
 /** 이메일·비밀번호로 회원가입한다. 성공하면 인덱스 페이지로 이동하고, 실패하면 오류 메시지를 반환한다. */
@@ -190,6 +201,5 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
   const { error } = await supabase.auth.signUp({ email, password });
   if (error) return { error: toKoreanSignupError(error.code) };
 
-  // redirect는 내부적으로 예외를 던지므로 try/catch 밖에서 호출한다.
-  redirect("/");
+  redirectAfterAccountChange("/");
 }

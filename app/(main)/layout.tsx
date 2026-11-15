@@ -1,13 +1,23 @@
 import { Suspense } from "react";
 import Header from "@/components/header/header";
 import Sidebar, { SidebarPlaceholder } from "@/components/sidebar/sidebar";
-import { getFolders } from "@/lib/data";
-import { bookmarks } from "@/lib/mock-data";
+import AccountWatcher from "@/components/account-watcher";
+import { getCurrentUserId } from "@/lib/current-user";
+import { getFolders, getLinks } from "@/lib/data";
 
-/** folders 테이블에서 폴더를 불러와 사이드바를 그린다. 요청마다 새로 조회한다. */
+/** 현재 사용자의 폴더와 링크(폴더별 개수용)를 불러와 사이드바를 그린다. 요청마다 새로 조회한다. */
 async function FolderSidebar() {
-  const folders = await getFolders();
-  return <Sidebar folders={folders} bookmarks={bookmarks} />;
+  const [folders, bookmarks, userId] = await Promise.all([
+    getFolders(),
+    getLinks(),
+    getCurrentUserId(),
+  ]);
+  return (
+    <>
+      <Sidebar folders={folders} bookmarks={bookmarks} />
+      <AccountWatcher userId={userId} />
+    </>
+  );
 }
 
 /** 서비스 본문 페이지: 상단 헤더 + 좌측 사이드바 */

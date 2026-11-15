@@ -5,8 +5,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { BlockedUrlError, fetchOpenGraph, parseHttpUrl, type OpenGraph } from "./og";
-import { bookmarks } from "./mock-data";
+import { getCurrentUserId } from "./current-user";
 import { FOLDER_NAME_MAX_LENGTH, type FolderNameState } from "./folder-name";
+
+const LOGIN_REQUIRED = "로그인이 필요해요. 다시 로그인해 주세요.";
 
 /** 폴더 이름의 형식(빈 값, 길이)을 검증한다. 문제가 있으면 에러 메시지를, 없으면 null을 반환한다. */
 function validateFolderNameFormat(name: string) {
@@ -26,11 +28,16 @@ export async function createFolder(
   const formatError = validateFolderNameFormat(name);
   if (formatError) return { ok: false, name, error: formatError };
 
+  const userId = await getCurrentUserId();
+  if (!userId) return { ok: false, name, error: LOGIN_REQUIRED };
+
   const supabase = createClient(await cookies());
 
+  // 이름 중복은 같은 사용자의 폴더 안에서만 검사한다.
   const { data: existing, error: selectError } = await supabase
     .from("folders")
     .select("id")
+    .eq("user_id", userId)
     .eq("name", name)
     .limit(1);
   if (selectError) return { ok: false, name, error: "폴더를 추가하지 못했어요. 다시 시도해 주세요." };
@@ -53,11 +60,15 @@ export async function updateFolder(
   const formatError = validateFolderNameFormat(name);
   if (formatError) return { ok: false, name, error: formatError };
 
+  const userId = await getCurrentUserId();
+  if (!userId) return { ok: false, name, error: LOGIN_REQUIRED };
+
   const supabase = createClient(await cookies());
 
   const { data: existing, error: selectError } = await supabase
     .from("folders")
     .select("id")
+    .eq("user_id", userId)
     .eq("name", name)
     .neq("id", id)
     .limit(1);
@@ -68,6 +79,7 @@ export async function updateFolder(
     .from("folders")
     .update({ name })
     .eq("id", id)
+    .eq("user_id", userId)
     .select("id");
   if (updateError) return { ok: false, name, error: "폴더 이름을 수정하지 못했어요. 다시 시도해 주세요." };
   if (updated.length === 0) return { ok: false, name, error: "폴더를 찾을 수 없어요." };
@@ -102,11 +114,15 @@ export async function createBookmark(
     return { ...state, error: "폴더를 선택해 주세요." };
   }
 
+  const userId = await getCurrentUserId();
+  if (!userId) return { ...state, error: LOGIN_REQUIRED };
+
   const supabase = createClient(await cookies());
   const { data: folder, error: folderError } = await supabase
     .from("folders")
     .select("id")
     .eq("id", folderId)
+    .eq("user_id", userId)
     .maybeSingle();
   if (folderError) return { ...state, error: "링크를 저장하지 못했어요. 다시 시도해 주세요." };
   if (!folder) return { ...state, error: "폴더를 선택해 주세요." };
@@ -166,11 +182,15 @@ export async function updateBookmark(
     return { ...state, error: `설명은 ${BOOKMARK_DESCRIPTION_MAX}자 이내로 입력해 주세요.` };
   }
 
+  const userId = await getCurrentUserId();
+  if (!userId) return { ...state, error: LOGIN_REQUIRED };
+
   const supabase = createClient(await cookies());
   const { data: folder, error: folderError } = await supabase
     .from("folders")
     .select("id")
     .eq("id", folderId)
+    .eq("user_id", userId)
     .maybeSingle();
   if (folderError) return { ...state, error: "링크를 수정하지 못했어요. 다시 시도해 주세요." };
   if (!folder) return { ...state, error: "폴더를 선택해 주세요." };
@@ -179,6 +199,7 @@ export async function updateBookmark(
     .from("links")
     .update({ folder_id: folderId, title, description: description || null })
     .eq("id", id)
+    .eq("user_id", userId)
     .select("id");
   if (updateError) return { ...state, error: "링크를 수정하지 못했어요. 다시 시도해 주세요." };
   if (updated.length === 0) return { ...state, error: "링크를 찾을 수 없어요." };
@@ -189,8 +210,11 @@ export async function updateBookmark(
 
 /** links 테이블에서 링크를 삭제한다. */
 export async function deleteBookmark(id: number) {
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error(LOGIN_REQUIRED);
+
   const supabase = createClient(await cookies());
-  const { error } = await supabase.from("links").delete().eq("id", id);
+  const { error } = await supabase.from("links").delete().eq("id", id).eq("user_id", userId);
   if (error) throw new Error(`링크를 삭제하지 못했어요: ${error.message}`);
 
   revalidatePath("/", "layout");
@@ -198,14 +222,18 @@ export async function deleteBookmark(id: number) {
 
 /** folders 테이블에서 폴더를 삭제하고, 그 폴더에 담긴 링크도 함께 삭제한다. */
 export async function deleteFolder(id: number) {
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error(LOGIN_REQUIRED);
+
   const supabase = createClient(await cookies());
-  const { data: deleted, error } = await supabase.from("folders").delete().eq("id", id).select("id");
+  const { data: deleted, error } = await supabase
+    .from("folders")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select("id");
   if (error) throw new Error(`폴더를 삭제하지 못했어요: ${error.message}`);
   if (deleted.length === 0) return;
-
-  for (let i = bookmarks.length - 1; i >= 0; i--) {
-    if (bookmarks[i].folderId === id) bookmarks.splice(i, 1);
-  }
 
   revalidatePath("/", "layout");
 }
