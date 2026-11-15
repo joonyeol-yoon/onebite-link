@@ -24,7 +24,32 @@ export const updateSession = async (request: NextRequest) => {
   });
 
   // Do not remove: this call triggers the token refresh and cookie write.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 로그인하지 않은 사용자가 보호된 페이지에 오면 로그인 페이지로 보낸다.
+  if (!user && isProtectedPath(request.nextUrl.pathname)) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    loginUrl.search = "";
+
+    // 갱신된 세션 쿠키(만료 쿠키 삭제 포함)가 사라지지 않도록 리다이렉트 응답에 옮겨 담는다.
+    const redirectResponse = NextResponse.redirect(loginUrl);
+    supabaseResponse.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie));
+    return redirectResponse;
+  }
 
   return supabaseResponse;
 };
+
+/** 로그인한 사용자만 들어갈 수 있는 페이지: 인덱스, 폴더별 페이지, 새 링크 페이지 */
+function isProtectedPath(pathname: string) {
+  return (
+    pathname === "/" ||
+    pathname === "/new" ||
+    pathname.startsWith("/new/") ||
+    pathname === "/folder" ||
+    pathname.startsWith("/folder/")
+  );
+}
