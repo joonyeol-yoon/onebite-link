@@ -26,6 +26,10 @@ type Props = {
   footerHref: string;
   /** 제출 처리. 실패하면 토스트로 보여 줄 오류 메시지를 반환한다. 없으면 제출해도 아무 일도 하지 않는다. */
   onSubmit?: (values: AuthValues) => Promise<string | undefined>;
+  /** 하단 안내 문구 위에 두는 보조 링크 (예: 비밀번호 찾기) */
+  secondaryLink?: { href: string; label: string };
+  /** 페이지를 열자마자 토스트로 보여 줄 오류 메시지 */
+  initialError?: string;
 };
 
 /** 로그인·회원가입이 함께 쓰는 폼 UI. 모든 칸을 채워야 제출 버튼이 활성화된다. */
@@ -39,12 +43,16 @@ export default function AuthForm({
   footerLinkLabel,
   footerHref,
   onSubmit,
+  secondaryLink,
+  initialError,
 }: Props) {
   const [values, setValues] = useState<AuthValues>(() =>
     Object.fromEntries(fields.map((field) => [field.name, ""])),
   );
   // 같은 메시지가 연달아 나와도 토스트가 다시 뜨도록 id를 함께 둔다.
-  const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(
+    initialError ? { id: 0, message: initialError } : null,
+  );
   const [pending, startTransition] = useTransition();
 
   const closeToast = useCallback(() => setToast(null), []);
@@ -97,12 +105,19 @@ export default function AuthForm({
         </button>
       </form>
 
-      <p className="text-center text-[14px] text-[var(--text-sub)]">
+      <div className="flex flex-col items-center gap-3">
+        {secondaryLink && (
+          <Link href={secondaryLink.href} className="link-hover text-[14px] text-[var(--text-sub)]">
+            {secondaryLink.label}
+          </Link>
+        )}
+        <p className="text-center text-[14px] text-[var(--text-sub)]">
         {footerText}{" "}
         <Link href={footerHref} className="link-hover font-medium text-[var(--title)] underline underline-offset-4">
           {footerLinkLabel}
         </Link>
-      </p>
+        </p>
+      </div>
     </div>
   );
 }

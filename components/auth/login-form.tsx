@@ -40,6 +40,7 @@ export default function LoginForm() {
       submitLabel="로그인"
       pendingLabel="로그인하는 중…"
       onSubmit={handleLogin}
+      secondaryLink={{ href: "/forgot-password", label: "비밀번호를 잊으셨나요?" }}
       footerText="아직 계정이 없으신가요?"
       footerLinkLabel="회원가입"
       footerHref="/signup"
