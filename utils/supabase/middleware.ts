@@ -43,7 +43,10 @@ export const updateSession = async (request: NextRequest) => {
   return supabaseResponse;
 };
 
-/** 로그인한 사용자만 들어갈 수 있는 페이지: 인덱스, 폴더별 페이지, 새 링크 페이지 */
+/**
+ * 로그인한 사용자만 들어갈 수 있는 페이지: 인덱스, 폴더별 페이지, 새 링크 페이지
+ * 여기에 없는 경로(로그인·회원가입, /privacy 개인정보 처리방침 등)는 누구나 접근할 수 있다.
+ */
 function isProtectedPath(pathname: string) {
   return (
     pathname === "/" ||

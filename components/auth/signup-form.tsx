@@ -56,6 +56,7 @@ export default function SignupForm() {
       footerText="이미 계정이 있으신가요?"
       footerLinkLabel="로그인"
       footerHref="/login"
+      secondaryLink={{ href: "/privacy", label: "개인정보 처리방침" }}
     />
   );
 }

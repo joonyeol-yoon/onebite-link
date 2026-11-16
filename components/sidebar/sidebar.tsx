@@ -2,6 +2,7 @@ import type { Bookmark, Folder } from "@/lib/types";
 import AllButton from "./all-button";
 import FolderList from "./folder-list";
 import LogoutButton from "./logout-button";
+import PrivacyLink from "./privacy-link";
 
 type Props = {
   folders: Folder[];
@@ -22,6 +23,7 @@ export default function Sidebar({ folders, bookmarks }: Props) {
       <AllButton count={bookmarks.length} />
       <FolderList folders={folders} bookmarks={bookmarks} />
       <LogoutButton />
+      <PrivacyLink />
     </nav>
   );
 }
