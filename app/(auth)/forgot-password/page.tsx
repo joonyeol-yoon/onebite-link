@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import ForgotPasswordForm from "@/components/auth/forgot-password-form";
+import { createMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "비밀번호 찾기 | 한입 링크",
-};
+export const metadata: Metadata = createMetadata({
+  title: "비밀번호 찾기",
+  description: "가입한 이메일로 비밀번호 재설정 링크를 받아 보세요.",
+});
 
 export default async function ForgotPasswordPage({ searchParams }: PageProps<"/forgot-password">) {
   const { error } = await searchParams;

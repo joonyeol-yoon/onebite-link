@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import PageTitle from "@/components/page-title";
 import LinkGrid from "@/components/link/link-grid";
 import { getFolder, getFolders, getLinks } from "@/lib/data";
+import { createMetadata } from "@/lib/metadata";
 
 /** 주소의 id를 폴더 id로 바꾼다. 올바른 숫자가 아니면 null을 반환한다. */
 function parseFolderId(id: string) {
@@ -16,7 +17,12 @@ export async function generateMetadata({
 }: PageProps<"/folder/[id]">): Promise<Metadata> {
   const folderId = parseFolderId((await params).id);
   const folder = folderId ? await getFolder(folderId) : null;
-  return { title: folder ? `${folder.name} | 한입 링크` : "한입 링크" };
+  return folder
+    ? createMetadata({
+        title: folder.name,
+        description: `'${folder.name}' 폴더에 저장한 링크 모음`,
+      })
+    : createMetadata();
 }
 
 /** 폴더 정보와 그 폴더에 담긴 링크를 links 테이블에서 불러와 보여준다. */

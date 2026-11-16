@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import PageTitle from "@/components/page-title";
 import LinkGrid from "@/components/link/link-grid";
 import { getFolders, getLinks } from "@/lib/data";
+import { createMetadata } from "@/lib/metadata";
+
+export const metadata: Metadata = createMetadata();
 
 /** links 테이블의 모든 링크를 불러와 보여준다. */
 async function AllLinks() {

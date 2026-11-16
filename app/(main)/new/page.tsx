@@ -3,10 +3,12 @@ import { Suspense } from "react";
 import PageTitle from "@/components/page-title";
 import LinkForm from "@/components/link-form/link-form";
 import { getFolders } from "@/lib/data";
+import { createMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "새 링크 | 한입 링크",
-};
+export const metadata: Metadata = createMetadata({
+  title: "새 링크",
+  description: "저장할 주소와 넣어 둘 폴더를 골라 새 링크를 추가하세요.",
+});
 
 /** 폴더 선택지를 folders 테이블에서 불러온다. (links.folder_id가 folders.id를 참조하므로) */
 async function NewLinkForm() {
